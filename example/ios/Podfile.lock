@@ -4,13 +4,10 @@ PODS:
     - MicrosoftCognitiveServicesSpeech-iOS (~> 1.37.0)
   - Flutter (1.0.0)
   - MicrosoftCognitiveServicesSpeech-iOS (1.37.0)
-  - permission_handler_apple (9.0.4):
-    - Flutter
 
 DEPENDENCIES:
   - azure_speech_recognition_null_safety (from `.symlinks/plugins/azure_speech_recognition_null_safety/ios`)
   - Flutter (from `Flutter`)
-  - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
 
 SPEC REPOS:
   trunk:
@@ -21,14 +18,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/azure_speech_recognition_null_safety/ios"
   Flutter:
     :path: Flutter
-  permission_handler_apple:
-    :path: ".symlinks/plugins/permission_handler_apple/ios"
 
 SPEC CHECKSUMS:
   azure_speech_recognition_null_safety: a476c9a12abad9699206b1bc89c1843e4055e3a6
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   MicrosoftCognitiveServicesSpeech-iOS: 766852ccd56e0c74bafbe9ea7033083c5f748d04
-  permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
 
 PODFILE CHECKSUM: aa9af445d1dca55a9a79485169040a812cb9c7e2
 
