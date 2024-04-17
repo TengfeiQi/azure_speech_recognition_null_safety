@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import MicrosoftCognitiveServicesSpeech
+import Flutter.FlutterBinaryMessenger
 import AVFoundation
 
 @available(iOS 13.0, *)
@@ -17,7 +18,14 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
     var simpleRecognitionTasks: Dictionary<String, SimpleRecognitionTask> = [:]
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        let channel = FlutterMethodChannel(name: "azure_speech_recognition", binaryMessenger: registrar.messenger())
+        // let taskQueue = registrar?.messenger().makeBackgroundTaskQueue()!
+
+        let channel = FlutterMethodChannel(
+            name: "azure_speech_recognition", 
+            binaryMessenger: registrar.messenger()
+            // codec: FlutterStandardMethodCodec.sharedInstance(),
+            // taskQueue: taskQueue
+        )
         let instance: SwiftAzureSpeechRecognitionPlugin = SwiftAzureSpeechRecognitionPlugin(azureChannel: channel)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
@@ -175,6 +183,11 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
             if nBestPhonemeCount != nil {
                 pronunciationAssessmentConfig?.nbestPhonemeCount = nBestPhonemeCount!
             }
+
+            
+
+            // pronunciationAssessmentConfig?.enableProsodyAssessment = true
+            // pronunciationAssessmentConfig?.enableContentAssessmentWithTopic("Talk about a book you've read recently")
             
             speechConfig?.speechRecognitionLanguage = lang
             speechConfig?.setPropertyTo(timeoutMs, by: SPXPropertyId.speechSegmentationSilenceTimeoutMs)
@@ -315,6 +328,8 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
                     granularity: granularity,
                     enableMiscue: enableMiscue)
                 pronunciationAssessmentConfig.phonemeAlphabet = phonemeAlphabet
+                pronunciationAssessmentConfig.enableProsodyAssessment() 
+                pronunciationAssessmentConfig.enableContentAssessment(withTopic: "greeting")
                 
                 if nBestPhonemeCount != nil {
                     pronunciationAssessmentConfig.nbestPhonemeCount = nBestPhonemeCount!

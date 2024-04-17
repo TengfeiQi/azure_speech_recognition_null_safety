@@ -30,6 +30,8 @@ class MicrophoneStream(
     //@Override
     override fun read(bytes : ByteArray) :Int {
         var ret : Int = recorder!!.read(bytes, 0, bytes.size);
+        // Write the audio data to the output file 
+        // writeToFile(bytes); // add by Tengfei
         return ret;
     }
 
@@ -52,5 +54,23 @@ class MicrophoneStream(
                 .build();
 
         this.recorder!!.startRecording();
+    }
+
+    // Method to set the output file path
+    // Add by Tengfei
+    fun setOutputFile(outputFile: String) {
+        this.outputFile = outputFile
+    }
+
+    // Method to write audio data to the output file
+    // Add by Tengfei
+    private fun writeToFile(bytes: ByteArray) {
+        try {
+            val fileOutputStream = FileOutputStream(outputFile, true) // append mode
+            fileOutputStream.write(bytes)
+            fileOutputStream.close()
+        } catch (e: IOException) {
+            Log.e("MicrophoneStream", "Error writing audio to file: ${e.message}")
+        }
     }
 }

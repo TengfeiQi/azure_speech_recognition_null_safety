@@ -1,3 +1,4 @@
+import 'package:azure_speech_recognition_null_safety_example/screens/assessment_screen.dart';
 import 'package:azure_speech_recognition_null_safety_example/screens/continuous_recognition_screen.dart';
 import 'package:azure_speech_recognition_null_safety_example/screens/simple_recognition_screen.dart';
 import 'package:azure_speech_recognition_null_safety_example/screens/home_screen.dart';
@@ -39,6 +40,7 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => HomeScreen(),
         '/simple': (context) => SimpleRecognitionScreen(),
         '/continuous': (context) => ContinuousRecognitionScreen(),
+        '/assessment': (context) => AssessmentScreen(),
       },
     );
   }

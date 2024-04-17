@@ -25,6 +25,15 @@ class HomeScreen extends StatelessWidget {
               },
               child: Text("Continuous recognition"),
             ),
+            SizedBox(
+              height: 30.0,
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed("/assessment");
+              },
+              child: Text("AssessmentScreen"),
+            ),
           ],
         ),
       ),
