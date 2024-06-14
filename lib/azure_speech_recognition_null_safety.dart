@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/services.dart';
 
 typedef void StringResultHandler(String text);
@@ -37,7 +38,7 @@ class AzureSpeechRecognition {
       if (int.parse(timeout) >= 100 && int.parse(timeout) <= 5000) {
         _timeout = timeout;
       } else {
-        throw 'Segmentation silence timeout must be an integer in the range 100 to 5000. See https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/how-to-recognize-speech?pivots=programming-language-csharp#change-how-silence-is-handled for more information.';
+        throw "Segmentation silence timeout must be an integer in the range 100 to 5000. See https://learn.microsoft.com/en-us/azure/cognitive-services/speech-service/how-to-recognize-speech?pivots=programming-language-csharp#change-how-silence-is-handled for more information.";
       }
     }
     exceptionHandler = null;
@@ -59,29 +60,29 @@ class AzureSpeechRecognition {
 
   Future _platformCallHandler(MethodCall call) async {
     switch (call.method) {
-      case 'speech.onRecognitionStarted':
+      case "speech.onRecognitionStarted":
         recognitionStartedHandler!();
         break;
-      case 'speech.onSpeech':
+      case "speech.onSpeech":
         recognitionResultHandler!(call.arguments);
         break;
-      case 'speech.onFinalResponse':
+      case "speech.onFinalResponse":
         finalTranscriptionHandler!(call.arguments);
         break;
-      case 'speech.onAssessmentResult':
+      case "speech.onAssessmentResult":
         assessmentResultHandler!(call.arguments);
         break;
-      case 'speech.onStartAvailable':
+      case "speech.onStartAvailable":
         startRecognitionHandler!();
         break;
-      case 'speech.onRecognitionStopped':
+      case "speech.onRecognitionStopped":
         recognitionStoppedHandler!();
         break;
-      case 'speech.onException':
+      case "speech.onException":
         exceptionHandler!(call.arguments);
         break;
       default:
-        print('Error: method called not found');
+        print("Error: method called not found");
     }
   }
 
@@ -113,21 +114,26 @@ class AzureSpeechRecognition {
       recognitionStoppedHandler = handler;
 
   // Performs speech recognition until a silence is detected
-  static void simpleVoiceRecognition() {
+  static void simpleVoiceRecognition({
+    String? accessToken,
+    String? lang,
+  }) {
     if ((_subKey != null && _region != null)) {
       _channel.invokeMethod('simpleVoice', {
-        'language': _lang,
-        'subscriptionKey': _subKey,
+        'language': lang ?? _lang,
+        'accessToken': accessToken,
+        // 'subscriptionKey': _subKey,
         'region': _region,
-        'timeout': _timeout,
+        'timeout': _timeout
       });
     } else {
-      throw 'Error: SpeechRecognitionParameters not initialized correctly';
+      throw "Error: SpeechRecognitionParameters not initialized correctly";
     }
   }
 
   /// Performs speech recognition until a silence is detected (with speech assessment)
   static void simpleVoiceRecognitionWithAssessment({
+    String? accessToken,
     String? referenceText,
     String? phonemeAlphabet,
     String? granularity,
@@ -137,7 +143,8 @@ class AzureSpeechRecognition {
     if ((_subKey != null && _region != null)) {
       _channel.invokeMethod('simpleVoiceWithAssessment', {
         'language': _lang,
-        'subscriptionKey': _subKey,
+        // 'subscriptionKey': _subKey,
+        'accessToken': accessToken,
         'region': _region,
         'timeout': _timeout,
         'granularity': granularity,
@@ -147,14 +154,14 @@ class AzureSpeechRecognition {
         'nBestPhonemeCount': nBestPhonemeCount,
       });
     } else {
-      throw 'Error: SpeechRecognitionParameters not initialized correctly';
+      throw "Error: SpeechRecognitionParameters not initialized correctly";
     }
   }
 
   /// When called for the first time, starts performing continuous recognition
   /// When called a second time, it stops the previously started recognition
-  /// It essentially toggles between 'recording' and 'not recording' states
-  static void continuousRecording() async {
+  /// It essentially toggles between "recording" and "not recording" states
+  static void continuousRecording({String? accessToken, String? lang}) async {
     if (_subKey != null && _region != null) {
       // _channel.invokeMethod('continuousStream', {
       //   'language': _lang,
@@ -163,8 +170,8 @@ class AzureSpeechRecognition {
       // });
       try {
         await _channel.invokeMethod('continuousStream', {
-          'language': _lang,
-          'subscriptionKey': _subKey,
+          'language': lang ?? _lang,
+          'accessToken': accessToken,
           'region': _region,
         });
       } on PlatformException catch (e) {
@@ -172,14 +179,16 @@ class AzureSpeechRecognition {
         print(e);
       }
     } else {
-      throw 'Error: SpeechRecognitionParameters not initialized correctly';
+      throw "Error: SpeechRecognitionParameters not initialized correctly";
     }
   }
 
   /// When called for the first time, starts performing continuous recognition (with speech assessment)
   /// When called a second time, it stops the previously started recognition (with speech assessment)
-  /// It essentially toggles between 'recording' and 'not recording' states
+  /// It essentially toggles between "recording" and "not recording" states
   static void continuousRecordingWithAssessment({
+    String? lang,
+    String? accessToken,
     String? referenceText,
     String? phonemeAlphabet,
     String? granularity,
@@ -188,8 +197,9 @@ class AzureSpeechRecognition {
   }) {
     if ((_subKey != null && _region != null)) {
       _channel.invokeMethod('continuousStreamWithAssessment', {
-        'language': _lang,
-        'subscriptionKey': _subKey,
+        'language': lang ?? _lang,
+        // 'subscriptionKey': _subKey,
+        'accessToken': accessToken,
         'region': _region,
         'granularity': granularity,
         'enableMiscue': enableMiscue,
@@ -198,7 +208,7 @@ class AzureSpeechRecognition {
         'nBestPhonemeCount': nBestPhonemeCount,
       });
     } else {
-      throw 'Error: SpeechRecognitionParameters not initialized correctly';
+      throw "Error: SpeechRecognitionParameters not initialized correctly";
     }
   }
 

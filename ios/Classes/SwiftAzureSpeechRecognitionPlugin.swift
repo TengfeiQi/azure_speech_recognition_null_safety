@@ -40,7 +40,8 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as? Dictionary<String, Any>
-        let speechSubscriptionKey = args?["subscriptionKey"] as? String ?? ""
+        // let speechSubscriptionKey = args?["subscriptionKey"] as? String ?? ""
+        let accessToken = args?["accessToken"] as? String ?? ""
         let serviceRegion = args?["region"] as? String ?? ""
         let lang = args?["language"] as? String ?? ""
         let timeoutMs = args?["timeout"] as? String ?? ""
@@ -61,12 +62,29 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         }
         if (call.method == "simpleVoice") {
             print("Called simpleVoice")
-            simpleSpeechRecognition(speechSubscriptionKey: speechSubscriptionKey, serviceRegion: serviceRegion, lang: lang, timeoutMs: timeoutMs)
+            simpleSpeechRecognition(
+                // speechSubscriptionKey: speechSubscriptionKey, 
+                accessToken: accessToken,
+                serviceRegion: serviceRegion, 
+                lang: lang, 
+                timeoutMs: timeoutMs
+            )
             result(true)
         }
         else if (call.method == "simpleVoiceWithAssessment") {
             print("Called simpleVoiceWithAssessment")
-            simpleSpeechRecognitionWithAssessment(referenceText: referenceText, phonemeAlphabet: phonemeAlphabet,  granularity: granularity, enableMiscue: enableMiscue, speechSubscriptionKey: speechSubscriptionKey, serviceRegion: serviceRegion, lang: lang, timeoutMs: timeoutMs, nBestPhonemeCount: nBestPhonemeCount)
+            simpleSpeechRecognitionWithAssessment(
+                referenceText: referenceText, 
+                phonemeAlphabet: phonemeAlphabet,  
+                granularity: granularity, 
+                enableMiscue: enableMiscue, 
+                accessToken: accessToken,
+                // speechSubscriptionKey: speechSubscriptionKey, 
+                serviceRegion: serviceRegion, 
+                lang: lang, 
+                timeoutMs: timeoutMs, 
+                nBestPhonemeCount: nBestPhonemeCount
+            )
             result(true)
         }
         else if (call.method == "isContinuousRecognitionOn") {
@@ -75,12 +93,27 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         }
         else if (call.method == "continuousStream") {
             print("Called continuousStream")
-            continuousStream(speechSubscriptionKey: speechSubscriptionKey, serviceRegion: serviceRegion, lang: lang)
+            continuousStream(
+                // speechSubscriptionKey: speechSubscriptionKey, 
+                accessToken: accessToken, 
+                serviceRegion: serviceRegion, 
+                lang: lang
+            )
             result(true)
         }
         else if (call.method == "continuousStreamWithAssessment") {
             print("Called continuousStreamWithAssessment")
-            continuousStreamWithAssessment(referenceText: referenceText, phonemeAlphabet: phonemeAlphabet,  granularity: granularity, enableMiscue: enableMiscue, speechSubscriptionKey: speechSubscriptionKey, serviceRegion: serviceRegion, lang: lang, nBestPhonemeCount: nBestPhonemeCount)
+            continuousStreamWithAssessment(
+                accessToken: accessToken,
+                referenceText: referenceText, 
+                phonemeAlphabet: phonemeAlphabet,  
+                granularity: granularity, 
+                enableMiscue: enableMiscue, 
+                // speechSubscriptionKey: speechSubscriptionKey, 
+                serviceRegion: serviceRegion, 
+                lang: lang, 
+                nBestPhonemeCount: nBestPhonemeCount
+            )
             result(true)
         }
         else if (call.method == "stopContinuousStream") {
@@ -102,7 +135,13 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func simpleSpeechRecognition(speechSubscriptionKey : String, serviceRegion : String, lang: String, timeoutMs: String) {
+    private func simpleSpeechRecognition(
+        // speechSubscriptionKey : String, 
+        accessToken: String, 
+        serviceRegion : String, 
+        lang: String, 
+        timeoutMs: String
+    ) {
         print("Created new recognition task")
         cancelActiveSimpleRecognitionTasks()
         let taskId = UUID().uuidString;
@@ -116,7 +155,8 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
                 try audioSession.setActive(true)
                 print("Setting custom audio session")
                 // Initialize speech recognizer and specify correct subscription key and service region
-                try speechConfig = SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
+                // try speechConfig = SPXSpeechConfiguration(authorizationToken: accessToken, subscription: speechSubscriptionKey, region: serviceRegion)
+                try speechConfig = SPXSpeechConfiguration(authorizationToken: accessToken, region: serviceRegion)
             } catch {
                 print("error \(error) happened")
                 speechConfig = nil
@@ -164,7 +204,18 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         simpleRecognitionTasks[taskId] = SimpleRecognitionTask(task: task, isCanceled: false)
     }
     
-    private func simpleSpeechRecognitionWithAssessment(referenceText: String, phonemeAlphabet: String, granularity: SPXPronunciationAssessmentGranularity, enableMiscue: Bool, speechSubscriptionKey : String, serviceRegion : String, lang: String, timeoutMs: String, nBestPhonemeCount: Int?) {
+    private func simpleSpeechRecognitionWithAssessment(
+        referenceText: String, 
+        phonemeAlphabet: String, 
+        granularity: SPXPronunciationAssessmentGranularity, 
+        enableMiscue: Bool, 
+        accessToken: String, 
+        // speechSubscriptionKey : String, 
+        serviceRegion : String, 
+        lang: String, 
+        timeoutMs: String, 
+        nBestPhonemeCount: Int?
+    ) {
         print("Created new recognition task")
         cancelActiveSimpleRecognitionTasks()
         let taskId = UUID().uuidString;
@@ -179,7 +230,8 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
                 try audioSession.setActive(true)
                 print("Setting custom audio session")
                 // Initialize speech recognizer and specify correct subscription key and service region
-                try speechConfig = SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
+                // try speechConfig = SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
+                try speechConfig = SPXSpeechConfiguration(authorizationToken: accessToken, region: serviceRegion)
                 try pronunciationAssessmentConfig = SPXPronunciationAssessmentConfiguration.init(
                     referenceText,
                     gradingSystem: SPXPronunciationAssessmentGradingSystem.hundredMark,
@@ -271,7 +323,7 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func continuousStream(speechSubscriptionKey : String, serviceRegion : String, lang: String) {
+    private func continuousStream(accessToken: String, serviceRegion : String, lang: String) {
         if (continousListeningStarted) {
             print("Stopping continous recognition")
             do {
@@ -299,7 +351,9 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
                 print("An unexpected error occurred")
             }
             
-            let speechConfig = try! SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
+            // let speechConfig = try! SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
+            // 新 token
+            let speechConfig = try! SPXSpeechConfiguration(authorizationToken: accessToken, region: serviceRegion)
             
             speechConfig.speechRecognitionLanguage = lang
             
@@ -328,7 +382,17 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    private func continuousStreamWithAssessment(referenceText: String, phonemeAlphabet: String, granularity: SPXPronunciationAssessmentGranularity, enableMiscue: Bool, speechSubscriptionKey : String, serviceRegion : String, lang: String, nBestPhonemeCount: Int?) {
+    private func continuousStreamWithAssessment(
+        accessToken: String, 
+        referenceText: String, 
+        phonemeAlphabet: String, 
+        granularity: SPXPronunciationAssessmentGranularity, 
+        enableMiscue: Bool, 
+        // speechSubscriptionKey : String, 
+        serviceRegion : String, 
+        lang: String, 
+        nBestPhonemeCount: Int?
+    ) {
         print("Continuous recognition started: \(continousListeningStarted)")
         if (continousListeningStarted) {
             print("Stopping continous recognition")
@@ -353,14 +417,19 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
                 try audioSession.setActive(true)
                 print("Setting custom audio session")
                 
-                let speechConfig = try SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
+                // 原来
+                // let speechConfig = try SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
+                // 新用 Token
+                // let accessToken = "eyJhbGciOiJFUzI1NiIsImtpZCI6ImtleTEiLCJ0eXAiOiJKV1QifQ.eyJyZWdpb24iOiJzb3V0aGVhc3Rhc2lhIiwic3Vic2NyaXB0aW9uLWlkIjoiYWMwN2Y5NDljZGE0NDUzN2E0ZWJhMTlmZDhiYTk3YmEiLCJwcm9kdWN0LWlkIjoiU3BlZWNoU2VydmljZXMuRjAiLCJjb2duaXRpdmUtc2VydmljZXMtZW5kcG9pbnQiOiJodHRwczovL2FwaS5jb2duaXRpdmUubWljcm9zb2Z0LmNvbS9pbnRlcm5hbC92MS4wLyIsImF6dXJlLXJlc291cmNlLWlkIjoiL3N1YnNjcmlwdGlvbnMvMGRjZjM5NmQtNTY5Yy00ZDY2LWJiYTItZGJlNDRjOTE2ZTFmL3Jlc291cmNlR3JvdXBzL3R0cy9wcm92aWRlcnMvTWljcm9zb2Z0LkNvZ25pdGl2ZVNlcnZpY2VzL2FjY291bnRzL21vb2RjaGF0Iiwic2NvcGUiOiJzcGVlY2hzZXJ2aWNlcyIsImF1ZCI6InVybjptcy5zcGVlY2hzZXJ2aWNlcy5zb3V0aGVhc3Rhc2lhIiwiZXhwIjoxNzE4MzM2NTY5LCJpc3MiOiJ1cm46bXMuY29nbml0aXZlc2VydmljZXMifQ.2R3Vb_za72Eu5M-gh6H-gDcscsNPCTnbWwRUbgQbaRjmxbOFjHWxz0Yj7WhjShf45kbCYyNkPzSnRAQ5d-lSxg"
+                let speechConfig = try SPXSpeechConfiguration(authorizationToken: accessToken, region: serviceRegion)
                 speechConfig.speechRecognitionLanguage = lang
                 
                 let pronunciationAssessmentConfig = try SPXPronunciationAssessmentConfiguration.init(
                     referenceText,
                     gradingSystem: SPXPronunciationAssessmentGradingSystem.hundredMark,
                     granularity: granularity,
-                    enableMiscue: enableMiscue)
+                    enableMiscue: enableMiscue
+                )
                 pronunciationAssessmentConfig.phonemeAlphabet = phonemeAlphabet
                 pronunciationAssessmentConfig.enableProsodyAssessment() 
                 pronunciationAssessmentConfig.enableContentAssessment(withTopic: "greeting")
