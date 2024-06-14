@@ -18,7 +18,7 @@ class AzureSpeechRecognition {
     _channel.setMethodCallHandler(_platformCallHandler);
   }
 
-  static String? _subKey;
+  // static String? _subKey;
   static String? _region;
   static String _lang = 'en-US';
   static String _timeout = '1000';
@@ -26,12 +26,12 @@ class AzureSpeechRecognition {
   /// default intitializer for almost every type except for the intent recognizer.
   /// Default language -> English
   AzureSpeechRecognition.initialize(
-    String subKey,
+    // String subKey,
     String region, {
     String? lang,
     String? timeout,
   }) {
-    _subKey = subKey;
+    // _subKey = subKey;
     _region = region;
     if (lang != null) _lang = lang;
     if (timeout != null) {
@@ -118,7 +118,7 @@ class AzureSpeechRecognition {
     String? accessToken,
     String? lang,
   }) {
-    if ((_subKey != null && _region != null)) {
+    if ((accessToken != null && _region != null)) {
       _channel.invokeMethod('simpleVoice', {
         'language': lang ?? _lang,
         'accessToken': accessToken,
@@ -140,7 +140,7 @@ class AzureSpeechRecognition {
     bool? enableMiscue,
     int? nBestPhonemeCount,
   }) {
-    if ((_subKey != null && _region != null)) {
+    if ((accessToken != null && _region != null)) {
       _channel.invokeMethod('simpleVoiceWithAssessment', {
         'language': _lang,
         // 'subscriptionKey': _subKey,
@@ -162,12 +162,7 @@ class AzureSpeechRecognition {
   /// When called a second time, it stops the previously started recognition
   /// It essentially toggles between "recording" and "not recording" states
   static void continuousRecording({String? accessToken, String? lang}) async {
-    if (_subKey != null && _region != null) {
-      // _channel.invokeMethod('continuousStream', {
-      //   'language': _lang,
-      //   'subscriptionKey': _subKey,
-      //   'region': _region,
-      // });
+    if (accessToken != null && _region != null) {
       try {
         await _channel.invokeMethod('continuousStream', {
           'language': lang ?? _lang,
@@ -195,7 +190,7 @@ class AzureSpeechRecognition {
     bool? enableMiscue,
     int? nBestPhonemeCount,
   }) {
-    if ((_subKey != null && _region != null)) {
+    if ((accessToken != null && _region != null)) {
       _channel.invokeMethod('continuousStreamWithAssessment', {
         'language': lang ?? _lang,
         // 'subscriptionKey': _subKey,

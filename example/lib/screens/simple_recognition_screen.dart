@@ -24,7 +24,6 @@ class _SimpleRecognitionScreenState extends State<SimpleRecognitionScreen>
   void activateSpeechRecognizer() {
     // MANDATORY INITIALIZATION
     AzureSpeechRecognition.initialize(
-      subKey,
       region,
       lang: lang,
       timeout: timeout,
