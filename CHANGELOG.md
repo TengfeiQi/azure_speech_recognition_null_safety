@@ -1,3 +1,6 @@
+## 0.9.7
+- Feat: Use access token feature.
+
 ## 0.9.5
 - Feat: Added method to stop continuous recognition independently.
 
