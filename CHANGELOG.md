@@ -1,4 +1,7 @@
 ## 0.9.7
+- Feat: enhance code.
+
+## 0.9.7
 - Feat: Use access token feature.
 
 ## 0.9.5
