@@ -116,14 +116,16 @@ class AzureSpeechRecognition {
   // Performs speech recognition until a silence is detected
   static void simpleVoiceRecognition({
     String? accessToken,
+    String? region,
     String? lang,
   }) {
-    if ((accessToken != null && _region != null)) {
+    String? currentRegion = region ?? _region;
+    if ((accessToken != null && currentRegion != null)) {
       _channel.invokeMethod('simpleVoice', {
         'language': lang ?? _lang,
         'accessToken': accessToken,
         // 'subscriptionKey': _subKey,
-        'region': _region,
+        'region': currentRegion,
         'timeout': _timeout
       });
     } else {
@@ -134,18 +136,20 @@ class AzureSpeechRecognition {
   /// Performs speech recognition until a silence is detected (with speech assessment)
   static void simpleVoiceRecognitionWithAssessment({
     String? accessToken,
+    String? region,
     String? referenceText,
     String? phonemeAlphabet,
     String? granularity,
     bool? enableMiscue,
     int? nBestPhonemeCount,
   }) {
-    if ((accessToken != null && _region != null)) {
+    String? currentRegion = region ?? _region;
+    if ((accessToken != null && currentRegion != null)) {
       _channel.invokeMethod('simpleVoiceWithAssessment', {
         'language': _lang,
         // 'subscriptionKey': _subKey,
         'accessToken': accessToken,
-        'region': _region,
+        'region': currentRegion,
         'timeout': _timeout,
         'granularity': granularity,
         'enableMiscue': enableMiscue,
@@ -161,13 +165,18 @@ class AzureSpeechRecognition {
   /// When called for the first time, starts performing continuous recognition
   /// When called a second time, it stops the previously started recognition
   /// It essentially toggles between "recording" and "not recording" states
-  static void continuousRecording({String? accessToken, String? lang}) async {
-    if (accessToken != null && _region != null) {
+  static void continuousRecording({
+    String? accessToken,
+    String? region,
+    String? lang,
+  }) async {
+    String? currentRegion = region ?? _region;
+    if (accessToken != null && currentRegion != null) {
       try {
         await _channel.invokeMethod('continuousStream', {
           'language': lang ?? _lang,
           'accessToken': accessToken,
-          'region': _region,
+          'region': currentRegion,
         });
       } on PlatformException catch (e) {
         // 处理异常
@@ -184,18 +193,20 @@ class AzureSpeechRecognition {
   static void continuousRecordingWithAssessment({
     String? lang,
     String? accessToken,
+    String? region,
     String? referenceText,
     String? phonemeAlphabet,
     String? granularity,
     bool? enableMiscue,
     int? nBestPhonemeCount,
   }) {
-    if ((accessToken != null && _region != null)) {
+    String? currentRegion = region ?? _region;
+    if ((accessToken != null && currentRegion != null)) {
       _channel.invokeMethod('continuousStreamWithAssessment', {
         'language': lang ?? _lang,
         // 'subscriptionKey': _subKey,
         'accessToken': accessToken,
-        'region': _region,
+        'region': currentRegion,
         'granularity': granularity,
         'enableMiscue': enableMiscue,
         'referenceText': referenceText,

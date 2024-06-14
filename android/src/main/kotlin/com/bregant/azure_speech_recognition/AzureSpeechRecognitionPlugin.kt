@@ -62,6 +62,7 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         val speechSubscriptionKey: String = call.argument("subscriptionKey") ?: ""
+        val accessToken: String = call.argument("accessToken") ?: ""
         val serviceRegion: String = call.argument("region") ?: ""
         val lang: String = call.argument("language") ?: ""
         val timeoutMs: String = call.argument("timeout") ?: ""
