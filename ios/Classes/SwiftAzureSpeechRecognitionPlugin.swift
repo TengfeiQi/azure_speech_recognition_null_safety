@@ -135,8 +135,8 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         }
     }
     
+    // speechSubscriptionKey : String, 
     private func simpleSpeechRecognition(
-        // speechSubscriptionKey : String, 
         accessToken: String, 
         serviceRegion : String, 
         lang: String, 
@@ -204,13 +204,13 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         simpleRecognitionTasks[taskId] = SimpleRecognitionTask(task: task, isCanceled: false)
     }
     
+    // speechSubscriptionKey : String, 
     private func simpleSpeechRecognitionWithAssessment(
         referenceText: String, 
         phonemeAlphabet: String, 
         granularity: SPXPronunciationAssessmentGranularity, 
         enableMiscue: Bool, 
         accessToken: String, 
-        // speechSubscriptionKey : String, 
         serviceRegion : String, 
         lang: String, 
         timeoutMs: String, 
@@ -335,7 +335,8 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
                 continousListeningStarted = false
             }
             catch {
-                print("Error occurred stopping continous recognition")
+                // print("Error occurred stopping continous recognition")
+                print("Error occurred stopping continous recognition: \(error)")
             }
         }
         else {
@@ -348,47 +349,80 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
                 print("Setting custom audio session")
             }
             catch {
-                print("An unexpected error occurred")
+                // print("An unexpected error occurred")
+                print("An unexpected error occurred while setting audio session: \(error)")
             }
             
             // let speechConfig = try! SPXSpeechConfiguration(subscription: speechSubscriptionKey, region: serviceRegion)
             // 新 token
-            let speechConfig = try! SPXSpeechConfiguration(authorizationToken: accessToken, region: serviceRegion)
+            // let speechConfig = try! SPXSpeechConfiguration(authorizationToken: accessToken, region: serviceRegion)
             
-            speechConfig.speechRecognitionLanguage = lang
+            // speechConfig.speechRecognitionLanguage = lang
             
-            let audioConfig = SPXAudioConfiguration()
+            // let audioConfig = SPXAudioConfiguration()
             
-            continousSpeechRecognizer = try! SPXSpeechRecognizer(speechConfiguration: speechConfig, audioConfiguration: audioConfig)
-            continousSpeechRecognizer!.addRecognizingEventHandler() {reco, evt in
-                print("intermediate recognition result: \(evt.result.text ?? "(no result)")")
-                DispatchQueue.main.async {
-                    self.azureChannel.invokeMethod("speech.onSpeech", arguments: evt.result.text)
+            // continousSpeechRecognizer = try! SPXSpeechRecognizer(speechConfiguration: speechConfig, audioConfiguration: audioConfig)
+            // continousSpeechRecognizer!.addRecognizingEventHandler() {reco, evt in
+            //     print("intermediate recognition result: \(evt.result.text ?? "(no result)")")
+            //     DispatchQueue.main.async {
+            //         self.azureChannel.invokeMethod("speech.onSpeech", arguments: evt.result.text)
+            //     }
+            // }
+            // continousSpeechRecognizer!.addRecognizedEventHandler({reco, evt in
+            //     let res = evt.result.text
+            //     print("final result \(res!)")
+            //     DispatchQueue.main.async {
+            //         self.azureChannel.invokeMethod("speech.onFinalResponse", arguments: res)
+            //     }
+            // })
+            // print("Listening...")
+            // try! continousSpeechRecognizer!.startContinuousRecognition()
+            // DispatchQueue.main.async {
+            //     self.azureChannel.invokeMethod("speech.onRecognitionStarted", arguments: nil)
+            // }
+            // continousListeningStarted = true
+
+
+            do {
+                let speechConfig = try SPXSpeechConfiguration(authorizationToken: accessToken, region: serviceRegion)
+                speechConfig.speechRecognitionLanguage = lang
+                
+                let audioConfig = SPXAudioConfiguration()
+                
+                continousSpeechRecognizer = try SPXSpeechRecognizer(speechConfiguration: speechConfig, audioConfiguration: audioConfig)
+                continousSpeechRecognizer!.addRecognizingEventHandler() {reco, evt in
+                    print("intermediate recognition result: \(evt.result.text ?? "(no result)")")
+                    DispatchQueue.main.async {
+                        self.azureChannel.invokeMethod("speech.onSpeech", arguments: evt.result.text)
+                    }
                 }
-            }
-            continousSpeechRecognizer!.addRecognizedEventHandler({reco, evt in
-                let res = evt.result.text
-                print("final result \(res!)")
+                continousSpeechRecognizer!.addRecognizedEventHandler({reco, evt in
+                    let res = evt.result.text
+                    print("final result \(res ?? "(no result)")")
+                    DispatchQueue.main.async {
+                        self.azureChannel.invokeMethod("speech.onFinalResponse", arguments: res)
+                    }
+                })
+                print("Listening...")
+                try continousSpeechRecognizer!.startContinuousRecognition()
                 DispatchQueue.main.async {
-                    self.azureChannel.invokeMethod("speech.onFinalResponse", arguments: res)
+                    self.azureChannel.invokeMethod("speech.onRecognitionStarted", arguments: nil)
                 }
-            })
-            print("Listening...")
-            try! continousSpeechRecognizer!.startContinuousRecognition()
-            DispatchQueue.main.async {
-                self.azureChannel.invokeMethod("speech.onRecognitionStarted", arguments: nil)
+                continousListeningStarted = true
             }
-            continousListeningStarted = true
+            catch {
+                print("An unexpected error occurred while starting continuous recognition: \(error)")
+            }
         }
     }
     
+    // speechSubscriptionKey : String, 
     private func continuousStreamWithAssessment(
         accessToken: String, 
         referenceText: String, 
         phonemeAlphabet: String, 
         granularity: SPXPronunciationAssessmentGranularity, 
         enableMiscue: Bool, 
-        // speechSubscriptionKey : String, 
         serviceRegion : String, 
         lang: String, 
         nBestPhonemeCount: Int?
