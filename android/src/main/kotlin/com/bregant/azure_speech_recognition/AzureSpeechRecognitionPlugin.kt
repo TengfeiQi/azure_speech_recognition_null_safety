@@ -28,6 +28,7 @@ import java.net.URI
 import android.util.Log
 import android.text.TextUtils
 import com.microsoft.cognitiveservices.speech.*
+import java.io.IOException
 
 import java.util.concurrent.Semaphore
 
@@ -45,7 +46,6 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
             flutterPluginBinding.getFlutterEngine().getDartExecutor(), "azure_speech_recognition"
         )
         azureChannel.setMethodCallHandler(this)
-
     }
 
     init {
