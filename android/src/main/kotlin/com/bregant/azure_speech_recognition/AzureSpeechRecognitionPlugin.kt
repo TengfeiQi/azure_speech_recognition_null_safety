@@ -61,7 +61,7 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
 
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        val speechSubscriptionKey: String = call.argument("subscriptionKey") ?: ""
+        // val speechSubscriptionKey: String = call.argument("subscriptionKey") ?: ""
         val accessToken: String = call.argument("accessToken") ?: ""
         val serviceRegion: String = call.argument("region") ?: ""
         val lang: String = call.argument("language") ?: ""
@@ -87,7 +87,8 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
         }
         when (call.method) {
             "simpleVoice" -> {
-                simpleSpeechRecognition(speechSubscriptionKey, serviceRegion, lang, timeoutMs)
+                // simpleSpeechRecognition(speechSubscriptionKey, serviceRegion, lang, timeoutMs)
+                simpleSpeechRecognition(accessToken, serviceRegion, lang, timeoutMs)
                 result.success(true)
             }
 
@@ -97,7 +98,8 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
                     phonemeAlphabet,
                     granularity,
                     enableMiscue,
-                    speechSubscriptionKey,
+                    // speechSubscriptionKey,
+                    accessToken,
                     serviceRegion,
                     lang,
                     timeoutMs,
@@ -111,7 +113,8 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
             }
 
             "continuousStream" -> {
-                micStreamContinuously(speechSubscriptionKey, serviceRegion, lang)
+                // micStreamContinuously(speechSubscriptionKey, serviceRegion, lang)
+                micStreamContinuously(accessToken, serviceRegion, lang)
                 result.success(true)
             }
 
@@ -121,7 +124,8 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
                     phonemeAlphabet,
                     granularity,
                     enableMiscue,
-                    speechSubscriptionKey,
+                    // speechSubscriptionKey,
+                    accessToken,
                     serviceRegion,
                     lang,
                     nBestPhonemeCount,
@@ -144,15 +148,23 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
     }
 
     private fun simpleSpeechRecognition(
-        speechSubscriptionKey: String, serviceRegion: String, lang: String, timeoutMs: String
+        // speechSubscriptionKey: String, 
+        accessToken: String,
+        serviceRegion: String, 
+        lang: String, 
+        timeoutMs: String
     ) {
         val logTag: String = "simpleVoice"
         try {
 
             val audioInput: AudioConfig = AudioConfig.fromDefaultMicrophoneInput()
 
+            // val config: SpeechConfig =
+            //     SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
+            
+            // 3333
             val config: SpeechConfig =
-                SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
+                SpeechConfig.fromAuthorizationToken(accessToken, serviceRegion)
 
             config.speechRecognitionLanguage = lang
             config.setProperty(PropertyId.Speech_SegmentationSilenceTimeoutMs, timeoutMs)
@@ -199,7 +211,8 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
         phonemeAlphabet: String,
         granularity: PronunciationAssessmentGranularity,
         enableMiscue: Boolean,
-        speechSubscriptionKey: String,
+        // speechSubscriptionKey: String,
+        accessToken: String,
         serviceRegion: String,
         lang: String,
         timeoutMs: String,
@@ -211,9 +224,10 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
         try {
 
             var audioInput: AudioConfig = AudioConfig.fromDefaultMicrophoneInput()
+            // SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
 
-            var config: SpeechConfig =
-                SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
+            var config: SpeechConfig = SpeechConfig.fromAuthorizationToken(accessToken, serviceRegion)
+
 
             config.speechRecognitionLanguage = lang
             config.setProperty(PropertyId.Speech_SegmentationSilenceTimeoutMs, timeoutMs)
@@ -280,7 +294,10 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
     }
 
     private fun micStreamContinuously(
-        speechSubscriptionKey: String, serviceRegion: String, lang: String
+        // speechSubscriptionKey: String, 
+        accessToken: String, 
+        serviceRegion: String, 
+        lang: String,
     ) {
         val logTag: String = "micStreamContinuous"
 
@@ -300,9 +317,13 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
 
         try {
             val audioConfig: AudioConfig = AudioConfig.fromDefaultMicrophoneInput()
+            
+            // val config: SpeechConfig =
+            //     SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
 
+            // 1111
             val config: SpeechConfig =
-                SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
+                SpeechConfig.fromAuthorizationToken(accessToken, serviceRegion)
 
             config.speechRecognitionLanguage = lang
 
@@ -356,7 +377,8 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
         phonemeAlphabet: String,
         granularity: PronunciationAssessmentGranularity,
         enableMiscue: Boolean,
-        speechSubscriptionKey: String,
+        // speechSubscriptionKey: String,
+        accessToken: String,
         serviceRegion: String,
         lang: String,
         nBestPhonemeCount: Int?,
@@ -380,8 +402,12 @@ class AzureSpeechRecognitionPlugin : FlutterPlugin, Activity(), MethodCallHandle
         try {
             val audioConfig: AudioConfig = AudioConfig.fromDefaultMicrophoneInput()
 
+            // val config: SpeechConfig =
+            //     SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
+            // 2222
+
             val config: SpeechConfig =
-                SpeechConfig.fromSubscription(speechSubscriptionKey, serviceRegion)
+                SpeechConfig.fromAuthorizationToken(accessToken, serviceRegion)
 
             config.speechRecognitionLanguage = lang
 
