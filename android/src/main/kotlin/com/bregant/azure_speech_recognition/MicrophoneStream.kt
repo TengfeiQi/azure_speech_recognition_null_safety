@@ -12,15 +12,19 @@ import java.io.IOException
 import com.microsoft.cognitiveservices.speech.audio.PullAudioInputStreamCallback;
 import com.microsoft.cognitiveservices.speech.audio.AudioStreamFormat;
 
+
+
 class MicrophoneStream(
     var SAMPLE_RATE : Int = 16000, 
     var thisFormat : AudioStreamFormat = AudioStreamFormat.getWaveFormatPCM(16000.toLong(), 16.toShort(), 1.toShort()),
     var recorder : AudioRecord? = null
-    ) : PullAudioInputStreamCallback(){
+    ) : PullAudioInputStreamCallback() {
 //(sRATE:Int,sFormat:AudioStreamFormat,sRecorder:AudioRecord)
     //private val  SAMPLE_RATE : Int = 16000;
     //private var thisFormat : AudioStreamFormat;
     //private var recorder : AudioRecord? = null;
+
+    private lateinit var outputFile: String
 
     init {
         //thisFormat = AudioStreamFormat.getWaveFormatPCM(SAMPLE_RATE.toLong(), 16.toShort(), 1.toShort());
