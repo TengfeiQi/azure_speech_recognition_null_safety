@@ -5,6 +5,10 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
 import com.microsoft.cognitiveservices.speech.audio.PullAudioInputStreamCallback;
 import com.microsoft.cognitiveservices.speech.audio.AudioStreamFormat;
 

@@ -12,6 +12,7 @@ import com.microsoft.cognitiveservices.speech.intent.LanguageUnderstandingModel
 import com.microsoft.cognitiveservices.speech.intent.IntentRecognitionResult
 import com.microsoft.cognitiveservices.speech.intent.IntentRecognizer
 import com.bregant.azure_speech_recognition.MicrophoneStream
+import com.microsoft.cognitiveservices.speech.PronunciationAssessmentConfig
 import android.app.Activity
 
 import java.util.concurrent.ExecutorService
