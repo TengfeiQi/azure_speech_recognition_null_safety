@@ -10,12 +10,15 @@ struct SimpleRecognitionTask {
     var isCanceled: Bool
 }
 
+// 优化后的版本
+// https://light.tinymaker.net/chat?id=72e96f2f-ccb7-4a58-a918-a177c904f9d6
 @available(iOS 13.0, *)
 public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
     var azureChannel: FlutterMethodChannel
     var continousListeningStarted: Bool = false
     var continousSpeechRecognizer: SPXSpeechRecognizer? = nil
     var simpleRecognitionTasks: Dictionary<String, SimpleRecognitionTask> = [:]
+    // private let recognitionQueue = DispatchQueue(label: "com.azure.speech.recognition")
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         guard let taskQueueProvider = registrar.messenger().makeBackgroundTaskQueue else {
@@ -34,8 +37,21 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
         let instance: SwiftAzureSpeechRecognitionPlugin = SwiftAzureSpeechRecognitionPlugin(azureChannel: channel)
         registrar.addMethodCallDelegate(instance, channel: channel)
     }
+
     init(azureChannel: FlutterMethodChannel) {
         self.azureChannel = azureChannel
+    }
+
+    // 添加清理方法
+    private func cleanup() {
+        continousSpeechRecognizer = nil
+        continousListeningStarted = false
+        simpleRecognitionTasks.removeAll()
+    }
+
+    // 在 deinit 中确保资源释放
+    deinit {
+        cleanup()
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -123,8 +139,6 @@ public class SwiftAzureSpeechRecognitionPlugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
-    
-    
     
     private func cancelActiveSimpleRecognitionTasks() {
         print("Cancelling any active tasks")
